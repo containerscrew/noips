@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/akamensky/argparse"
+	"github.com/gin-gonic/gin"
 	"github.com/nanih98/noips/internal/providers"
 	"github.com/nanih98/noips/internal/providers/infra"
+	"github.com/nanih98/noips/pkg/app"
+	"github.com/prometheus/client_golang/prometheus"
 	"log"
 	"os"
 )
@@ -49,8 +52,20 @@ func main() {
 	// Start metrics
 	metrics = infra.NewMetrics()
 	metrics.RegisterMetrics()
+	
+	// Api config
+	router := app.APIConfiguration()
 
-	//Api
-	//promHandler := promhttp.HandlerFor(, promhttp.HandlerOpts{})
+	// Metrics handler
+	router.GET("/metrics", gin.WrapH(metrics.RegisterHandler()), func(context *gin.Context) {
+		// If someone ask for the metrics, the metrics are refreshed :)
+		for _, subnet := range subnets {
+			log.Println("Refreshing data for", subnet.ID, subnet.CIDR, subnet.AvailableIPV4)
+			m.info.With(prometheus.Labels{"subnet_id": subnet.ID, "subnet_cidr": subnet.CIDR}).Set(float64(subnet.AvailableIPV4))
+		}
+	})
 
+	if err := router.Run(":8080"); err != nil {
+		panic(err)
+	}
 }
