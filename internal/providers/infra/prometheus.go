@@ -1,23 +1,28 @@
 package infra
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"net/http"
+)
 
 type Metrics struct {
 	subnet_available_ipv4 *prometheus.GaugeVec
 }
 
 type PrometheusInputData struct {
-	NewRegistry           prometheus.Registerer
+	NewRegistry prometheus.Registry
+	Handler     http.Handler
 }
 
-func NewMetrics() *PrometheusInputData {
-	return &PrometheusInputData{
-		NewRegistry:           prometheus.Registerer().DefaultRegisterer{},
-		:
-	}
-}
+//func NewMetrics() *PrometheusInputData {
+//	return &PrometheusInputData{
+//		NewRegistry: prometheus.NewRegistry(),
+//	}
+//}
 
-func (p *PrometheusInputData) RegisterMetric() {
+func (p *PrometheusInputData) RegisterMetrics() {
 	m := &Metrics{
 		subnet_available_ipv4: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: "aws_subnets_free_ipv4",
@@ -26,5 +31,14 @@ func (p *PrometheusInputData) RegisterMetric() {
 		},
 			[]string{"subnet_id", "subnet_cidr"}),
 	}
+
 	p.NewRegistry.MustRegister(m.subnet_available_ipv4)
+}
+
+func (p *PrometheusInputData) RegisterHandler() http.Handler {
+	return promhttp.HandlerFor(p.NewRegistry, promhttp.HandlerOpts{})
+}
+
+func (p *PrometheusInputData) UpdateMetrics() {
+	panic(fmt.Errorf("implementing function"))
 }

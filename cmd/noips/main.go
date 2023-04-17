@@ -5,6 +5,7 @@ import (
 	"github.com/akamensky/argparse"
 	"github.com/nanih98/noips/internal/providers"
 	"github.com/nanih98/noips/internal/providers/infra"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"os"
 )
@@ -26,6 +27,7 @@ func main() {
 	//})
 
 	var customProvider providers.Providers
+	var metrics providers.Metrics
 
 	switch *provider {
 	case "aws":
@@ -46,5 +48,10 @@ func main() {
 	subnets := customProvider.BuildSubnetData()
 
 	// Start metrics
-	
+	metrics = infra.NewMetrics()
+	metrics.RegisterMetrics()
+
+	//Api
+	promHandler := promhttp.HandlerFor(, promhttp.HandlerOpts{})
+
 }
