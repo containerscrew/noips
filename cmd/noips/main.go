@@ -5,7 +5,6 @@ import (
 	"github.com/akamensky/argparse"
 	"github.com/nanih98/noips/internal/providers"
 	"github.com/nanih98/noips/internal/providers/infra"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"os"
 )
@@ -52,6 +51,6 @@ func main() {
 	metrics.RegisterMetrics()
 
 	//Api
-	promHandler := promhttp.HandlerFor(metrics., promhttp.HandlerOpts{})
+	//promHandler := promhttp.HandlerFor(, promhttp.HandlerOpts{})
 
 }

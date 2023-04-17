@@ -1,8 +1,10 @@
 package providers
 
+import "net/http"
+
 type Metrics interface {
 	RegisterMetrics()
-	RegisterHandler()
+	RegisterHandler() http.Handler
 	UpdateMetrics()
 }
 

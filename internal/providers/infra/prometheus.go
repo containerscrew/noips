@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type Metrics struct {
+type MetricsData struct {
 	subnet_available_ipv4 *prometheus.GaugeVec
 }
 
@@ -18,12 +18,12 @@ type PrometheusInputData struct {
 
 func NewMetrics() *PrometheusInputData {
 	return &PrometheusInputData{
-		NewRegistry: prometheus.NewRegistry(),
+		NewRegistry: *prometheus.NewRegistry(),
 	}
 }
 
 func (p *PrometheusInputData) RegisterMetrics() {
-	m := &Metrics{
+	m := &MetricsData{
 		subnet_available_ipv4: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: "aws_subnets_free_ipv4",
 			Name:      "info",
