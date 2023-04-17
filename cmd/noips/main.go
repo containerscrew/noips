@@ -52,6 +52,6 @@ func main() {
 	metrics.RegisterMetrics()
 
 	//Api
-	promHandler := promhttp.HandlerFor(, promhttp.HandlerOpts{})
+	promHandler := promhttp.HandlerFor(metrics., promhttp.HandlerOpts{})
 
 }

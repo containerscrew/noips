@@ -16,11 +16,11 @@ type PrometheusInputData struct {
 	Handler     http.Handler
 }
 
-//func NewMetrics() *PrometheusInputData {
-//	return &PrometheusInputData{
-//		NewRegistry: prometheus.NewRegistry(),
-//	}
-//}
+func NewMetrics() *PrometheusInputData {
+	return &PrometheusInputData{
+		NewRegistry: prometheus.NewRegistry(),
+	}
+}
 
 func (p *PrometheusInputData) RegisterMetrics() {
 	m := &Metrics{
@@ -36,7 +36,7 @@ func (p *PrometheusInputData) RegisterMetrics() {
 }
 
 func (p *PrometheusInputData) RegisterHandler() http.Handler {
-	return promhttp.HandlerFor(p.NewRegistry, promhttp.HandlerOpts{})
+	return promhttp.HandlerFor(&p.NewRegistry, promhttp.HandlerOpts{})
 }
 
 func (p *PrometheusInputData) UpdateMetrics() {
