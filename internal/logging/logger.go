@@ -12,7 +12,7 @@ type CustomLogger struct {
 }
 
 type LoggerOptions struct {
-	LogLevel string // by the moment only supported info or debu
+	LogLevel string // by the moment only supported info or debug
 }
 
 func NewLogger(options *LoggerOptions) *CustomLogger {
@@ -20,13 +20,12 @@ func NewLogger(options *LoggerOptions) *CustomLogger {
 }
 
 func logger(options *LoggerOptions) *zap.SugaredLogger {
-	config := zap.NewProductionConfig()
-	config.OutputPaths = append(config.OutputPaths, "logs.log")
-	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("Jan 02 15:04:05.000000000")
-	config.EncoderConfig.TimeKey = "timestamp"
-	config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	config := zap.NewProductionEncoderConfig()
+	config.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.TimeKey = "timestamp"
+	//config.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
-	consoleEncoder := zapcore.NewJSONEncoder(config.EncoderConfig)
+	consoleEncoder := zapcore.NewJSONEncoder(config)
 
 	defaultLogLevel, _ := zapcore.ParseLevel(options.LogLevel)
 

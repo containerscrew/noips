@@ -2,8 +2,10 @@ package infra
 
 import (
 	"fmt"
+	"github.com/nanih98/noips/pkg/app"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
 	"net/http"
 )
 
@@ -14,6 +16,7 @@ type MetricsData struct {
 type PrometheusInputData struct {
 	NewRegistry prometheus.Registry
 	Handler     http.Handler
+	Metrics     *MetricsData
 }
 
 func NewMetrics() *PrometheusInputData {
@@ -33,12 +36,15 @@ func (p *PrometheusInputData) RegisterMetrics() {
 	}
 
 	p.NewRegistry.MustRegister(m.subnet_available_ipv4)
+	p.Metrics = m
 }
 
 func (p *PrometheusInputData) RegisterHandler() http.Handler {
 	return promhttp.HandlerFor(&p.NewRegistry, promhttp.HandlerOpts{})
 }
 
-func (p *PrometheusInputData) UpdateMetrics() {
-	panic(fmt.Errorf("implementing function"))
+func (p *PrometheusInputData) UpdateMetrics(subnet app.SubnetsData) {
+	log.Println("Refreshing data for", subnet.ID, subnet.CIDR, subnet.AvailableIPV4)
+	fmt.Println(subnet.ID, subnet.CIDR, subnet.AvailableIPV4)
+	p.Metrics.subnet_available_ipv4.With(prometheus.Labels{"subnet_id": subnet.ID, "subnet_cidr": subnet.CIDR}).Set(float64(subnet.AvailableIPV4))
 }
