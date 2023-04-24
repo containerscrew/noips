@@ -23,9 +23,9 @@ func logger(options *LoggerOptions) *zap.SugaredLogger {
 	config := zap.NewProductionEncoderConfig()
 	config.EncodeTime = zapcore.ISO8601TimeEncoder
 	config.TimeKey = "timestamp"
-	//config.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	config.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
-	consoleEncoder := zapcore.NewJSONEncoder(config)
+	consoleEncoder := zapcore.NewConsoleEncoder(config)
 
 	defaultLogLevel, _ := zapcore.ParseLevel(options.LogLevel)
 
